@@ -16,6 +16,6 @@ class ProductCategory extends Model
 
     public function products()
     {
-        return $this->hasMay(Product::class, 'categories', 'id');
+        return $this->hasMay(Product::class, 'categories_id', 'id');
     }
 }
