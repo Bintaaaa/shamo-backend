@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\API\ProductCategoryController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\API\ProductCategoryController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\UserController;
 use Illuminate\Support\Facades\Route;
@@ -17,10 +17,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('user', [UserController::class, 'fetch']);
+    Route::post('user', [UserController::class, 'updateProfile']);
 });
+
 
 Route::get('products', [ProductController::class, 'all']);
 Route::get('category', [ProductCategoryController::class, 'all']);
-Route::get('register', [UserController::class, 'register']);
+Route::post('register', [UserController::class, 'register']);
+Route::post('login', [UserController::class, 'login']);
