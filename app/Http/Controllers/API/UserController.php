@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Fortify\Rules\Password;
+use Illuminate\Support\Facades\Validator;
+
 
 class UserController extends Controller
 {
@@ -93,13 +95,16 @@ class UserController extends Controller
     public function updateProfile(Request $request)
     {
         try {
-            $request->validate([
+            $validator = Validator::make($request->all(), [
                 'name' => 'string|required|max:255',
                 'email' => 'email|required|max:255',
                 'username' => 'required|max:255',
                 'phone' => 'number|required|max:13'
             ]);
 
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 400);
+            }
             $user = Auth::user();
             $user->update([
                 'name' => $request->name,
@@ -107,20 +112,27 @@ class UserController extends Controller
                 'username' => $request->username,
                 'phone' => $request->phone,
             ]);
-
             return ResponseFormatter::success($user, 'Profile Updated');
-
-            //     $data = $request->all();
-
-            // $user = Auth::user();
-            // $user->update($data);
-
-            // return ResponseFormatter::success($user,'Profile Updated');
         } catch (Exception $error) {
             return ResponseFormatter::error([
                 'message' => 'Something went wrong',
                 'error' => $error,
             ], 'Failed Update', 500);
         }
+
+        //kalo gagal pake ini aja
+        // $data = $request->all();
+
+        // $user = Auth::user();
+        // $user->update($data);
+
+        // return ResponseFormatter::success($user,'Profile Updated');
+    }
+
+    public function logout(Request $request)
+    {
+        $token = $request->user()->currentAccessToken()->delete();
+
+        return ResponseFormatter::success($token, 'Token Revoked');
     }
 }
