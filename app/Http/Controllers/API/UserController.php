@@ -88,7 +88,7 @@ class UserController extends Controller
     {
         return ResponseFormatter::success(
             $request->user(),
-            'Data profile user berhasildiambil'
+            'Data profile user berhasil diambil'
         );
     }
 
